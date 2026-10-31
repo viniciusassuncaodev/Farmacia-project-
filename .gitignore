@@ -1,0 +1,23 @@
+# Banco de dados local e arquivos auxiliares do SQLite
+Farmacia.db
+Farmacia.db-*
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+# Segredos e configurações locais
+.env
+.env.*
+!.env.example
+
+# Ambiente e arquivos temporários do Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Dependências e arquivos gerados pelo sistema
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/

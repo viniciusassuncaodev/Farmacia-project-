@@ -1,0 +1,255 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <!-- Configurações básicas da página e arquivos de estilo/fontes -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#031b3a">
+  <title>Droga Center + Rede Amparo | Sua saúde em boas mãos</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <!-- Cabeçalho: marcas, navegação, busca e atalhos -->
+  <header>
+    <div class="wrap nav">
+      <a class="brands" href="#inicio" aria-label="Droga Center e Rede Amparo">
+        <span class="brand dc">
+          <span class="cross">✚</span>
+          <span>Droga<br>Center</span>
+        </span>
+        <i class="divider"></i>
+        <span class="brand amp">
+          <span class="mark">⌘</span>
+          <span>REDE<b>AMPARO</b><small>FARMÁCIA</small></span>
+        </span>
+      </a>
+
+      <nav class="navlinks" id="primary-navigation" aria-label="Navegação principal">
+        <a href="#inicio">Início</a>
+        <a href="#produtos">Produtos</a>
+        <a href="#entregas">Entregas</a>
+        <a href="#unidades">Unidades</a>
+        <a href="#contato">Contato</a>
+      </nav>
+
+      <form class="search" id="search-form" role="search">
+        <input id="search-input" type="search" placeholder="O que você procura?" aria-label="Buscar categoria de produto" aria-controls="category-list">
+        <button type="submit" aria-label="Buscar">⌕</button>
+      </form>
+      <button class="cart" aria-label="Sacola">🛒</button>
+      <button class="hamb" aria-label="Abrir menu" aria-expanded="false" aria-controls="primary-navigation" id="menu-toggle">☰</button>
+    </div>
+  </header>
+
+  <div class="announcement" aria-label="Informações da farmácia">
+    <div class="wrap announcement-inner">
+      <span><i class="material-symbols-outlined" aria-hidden="true">location_on</i> Duas unidades em Altos – PI</span>
+      <span><i class="material-symbols-outlined" aria-hidden="true">schedule</i> Atendimento todos os dias</span>
+      <a href="#entregas"><i class="material-symbols-outlined" aria-hidden="true">delivery_dining</i> Peça e receba em casa <b>→</b></a>
+    </div>
+  </div>
+
+  <main>
+    <!-- Início: apresentação principal e benefícios da farmácia -->
+    <section class="hero" id="inicio">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <div class="hero-logo"><span>✚</span>DrogaCenter</div>
+          <h1>Sua saúde em<br><strong>boas mãos!</strong></h1>
+          <p>Medicamentos, dermocosméticos, higiene, beleza e muito mais. Tudo em um só lugar!</p>
+          <a class="pill" href="#unidades">Encontre uma unidade&nbsp; →</a>
+          <div class="benefits">
+            <span class="benefit"><i>🚚</i>Entrega rápida em toda a cidade</span>
+            <span class="benefit"><i>♢</i>Produtos originais e de qualidade</span>
+            <span class="benefit"><i>♧</i>Atendimento especializado</span>
+          </div>
+        </div>
+        <div class="hero-tag">Se tem saúde,<br>tem <em>Droga Center!</em></div>
+        <div class="dots"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <!-- Produtos: atalhos para as categorias disponíveis -->
+    <section id="produtos">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Nossos Produtos</h2>
+            <p>Tudo o que você precisa, com a qualidade que você confia.</p>
+          </div>
+          <a class="more" href="#ofertas">Ver todos →</a>
+        </div>
+        <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
+        <div class="categories" id="category-list">
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">pill</span>Medicamentos</a>
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">sanitizer</span>Dermocosméticos</a>
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">shower</span>Higiene Pessoal</a>
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">spa</span>Beleza</a>
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">medication</span>Vitaminas e<br>Suplementos</a>
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">child_care</span>Bebês e Infantil</a>
+          <a class="category" href="#ofertas"><span class="material-symbols-outlined icon">experiment</span>Perfumaria</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ofertas demonstrativas: produtos e preços fictícios para estruturar o catálogo -->
+    <section class="offers" id="ofertas">
+      <div class="wrap">
+        <div class="section-head offers-heading">
+          <div>
+            <h2>Produtos em destaque</h2>
+            <p>Uma prévia de como o catálogo da farmácia pode ficar.</p>
+          </div>
+          <span class="demo-label" id="demo-label">Exemplo demonstrativo · preços fictícios</span>
+        </div>
+        <div class="catalog-grid" id="catalog-list">
+          <article class="catalog-card" data-search="hidratante corporal pele cuidados dermocosmeticos">
+            <div class="catalog-visual visual-lotion" aria-hidden="true"><span>HIDRATAÇÃO<br>DIÁRIA</span><b>200 ml</b></div>
+            <div class="catalog-info">
+              <span class="catalog-category">Cuidados com a pele</span>
+              <h3>Hidratante corporal</h3>
+              <p>Exemplo de produto para o catálogo</p>
+              <strong class="catalog-price">R$ 29,90</strong>
+              <a href="#unidades" class="catalog-link">Consultar na unidade <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="catalog-card" data-search="protetor solar fps 50 dermocosmeticos pele">
+            <div class="catalog-visual visual-sun" aria-hidden="true"><span>PROTEÇÃO<br>SOLAR</span><b>FPS 50</b></div>
+            <div class="catalog-info">
+              <span class="catalog-category">Cuidados com a pele</span>
+              <h3>Protetor solar</h3>
+              <p>Exemplo de produto para o catálogo</p>
+              <strong class="catalog-price">R$ 49,90</strong>
+              <a href="#unidades" class="catalog-link">Consultar na unidade <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="catalog-card" data-search="sabonete liquido higiene pessoal banho">
+            <div class="catalog-visual visual-soap" aria-hidden="true"><span>CUIDADO<br>SUAVE</span><b>250 ml</b></div>
+            <div class="catalog-info">
+              <span class="catalog-category">Higiene pessoal</span>
+              <h3>Sabonete líquido</h3>
+              <p>Exemplo de produto para o catálogo</p>
+              <strong class="catalog-price">R$ 16,90</strong>
+              <a href="#unidades" class="catalog-link">Consultar na unidade <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="catalog-card" data-search="vitamina c suplemento vitaminas bem estar">
+            <div class="catalog-visual visual-vitamin" aria-hidden="true"><span>VITAMINA<br>C</span><b>30 un.</b></div>
+            <div class="catalog-info">
+              <span class="catalog-category">Vitaminas</span>
+              <h3>Vitamina C</h3>
+              <p>Exemplo de produto para o catálogo</p>
+              <strong class="catalog-price">R$ 24,90</strong>
+              <a href="#unidades" class="catalog-link">Consultar na unidade <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        </div>
+        <p class="catalog-note" id="catalog-note">Os produtos e valores acima são apenas exemplos de demonstração. Consulte as unidades para confirmar disponibilidade e preços.</p>
+      </div>
+    </section>
+
+    <!-- Rede Amparo: apresentação da marca parceira -->
+    <section class="amparo">
+      <div class="wrap">
+        <div class="amparo-copy">
+          <div class="amparo-logo"><i>⌘</i><span>REDE<b>AMPARO</b>FARMÁCIA</span></div>
+          <h2>Mais perto de você</h2>
+          <p>Duas unidades para melhor atender a sua família.</p>
+          <a class="pill" href="#unidades">Saiba mais&nbsp; →</a>
+          <div class="mini-benefits">
+            <span><i>♙</i>Atendimento humanizado</span>
+            <span><i>◇</i>Variedade de produtos</span>
+            <span><i>🚚</i>Entrega em sua região</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Unidades e entregas: endereços, horários, mapas e contato -->
+    <section class="units" id="unidades">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Nossas Unidades</h2>
+            <p>Encontre a unidade mais próxima de você.</p>
+          </div>
+        </div>
+        <div class="units-grid">
+          <article class="unit-card">
+            <div>
+              <div class="unit-title"><span class="seal">DROGA<br>CENTER</span> Droga Center – Matriz</div>
+              <p>⌖ BR-343, 1976<br>&nbsp;&nbsp; Centro – Altos/PI, 64290-000</p>
+              <p>◷ Todos os dias: 07h às 22h</p>
+              <a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=BR-343%2C+1976%2C+Centro%2C+Altos%2C+PI%2C+64290-000"
+                target="_blank" rel="noopener noreferrer">♧ Ver no mapa</a>
+            </div>
+            <div class="unit-photo" role="img" aria-label="Fachada de farmácia"></div>
+          </article>
+
+          <article class="unit-card">
+            <div>
+              <div class="unit-title"><span class="seal amparo-seal">AMPARO</span> Rede Amparo – Filial</div>
+              <p>⌖ Rua Lucrécio Avelino, 200<br>&nbsp;&nbsp; Centro – Altos/PI, 64290-000</p>
+              <p>◷ Todos os dias: 07h às 21h</p>
+              <a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=Rua+Lucr%C3%A9cio+Avelino%2C+200%2C+Centro%2C+Altos%2C+PI%2C+64290-000"
+                target="_blank" rel="noopener noreferrer">♧ Ver no mapa</a>
+            </div>
+            <div class="unit-photo" role="img" aria-label="Fachada de farmácia"></div>
+          </article>
+
+          <aside class="delivery-card" id="entregas">
+            <span class="scooter"><img src="assets/Motoboy.avif" alt="Motoboy fazendo uma entrega"></span>
+            <h3>Entregas rápidas<br>em toda a cidade!</h3>
+            <p>Faça seu pedido pelo WhatsApp e receba no conforto da sua casa.</p>
+            <a class="whats" href="#unidades">Consulte uma unidade</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé: marcas, links úteis, redes sociais e direitos autorais -->
+  <footer id="contato">
+    <div class="wrap">
+      <div class="footer-row">
+        <div class="footer-brands">
+          <div class="brands">
+            <span class="brand dc"><span class="cross">✚</span><span>Droga<br>Center</span></span>
+            <i class="divider"></i>
+            <span class="brand amp"><span class="mark">⌘</span><span>REDE<b>AMPARO</b><small>FARMÁCIA</small></span></span>
+          </div>
+        </div>
+        <div class="footer-col">
+          <strong>Links úteis</strong>
+          <div class="footer-links">
+            <a href="#inicio">Início</a>
+            <a href="#unidades">Unidades</a>
+            <a href="#produtos">Produtos</a>
+            <a href="#contato">Contato</a>
+            <a href="#entregas">Entregas</a>
+            <a href="#">Política de Privacidade</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <strong>Siga nossas redes</strong>
+          <div class="social">◎ ◉ ◍</div>
+          <div class="copyright">© 2025 Droga Center e Rede Amparo. Todos os direitos reservados.</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interações: menu mobile e busca -->
+  <script src="script.js" defer></script>
+</body>
+
+</html>

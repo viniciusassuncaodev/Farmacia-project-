@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#031b3a">
+  <title>Administração | Droga Center + Rede Amparo</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/admin.css">
+  <script src="/admin.js" defer></script>
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <div class="wrap admin-header-inner">
+      <a class="admin-brand" href="/" aria-label="Voltar à loja">
+        <span class="admin-brand-mark">✚</span>
+        <span>Droga Center <small>PAINEL ADMINISTRATIVO</small></span>
+      </a>
+      <a class="admin-back" href="/">← Voltar à loja</a>
+    </div>
+  </header>
+
+  <main class="admin-main wrap">
+    <section class="login-card" id="login-panel" aria-labelledby="login-title">
+      <span class="admin-eyebrow">ÁREA RESTRITA</span>
+      <h1 id="login-title">Entrar no painel</h1>
+      <p>Acesse para gerenciar o catálogo de produtos.</p>
+      <form id="login-form">
+        <label for="login-username">Usuário</label>
+        <input id="login-username" name="username" autocomplete="username" required>
+        <label for="login-password">Senha</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        <button class="admin-button primary" type="submit">Entrar</button>
+      </form>
+      <p class="admin-message" id="login-message" role="alert" aria-live="polite"></p>
+    </section>
+
+    <section class="admin-dashboard" id="dashboard" hidden>
+      <div class="admin-title-row">
+        <div>
+          <span class="admin-eyebrow">CATÁLOGO</span>
+          <h1>Produtos</h1>
+          <p>Cadastre, atualize ou desative itens da vitrine.</p>
+        </div>
+        <button class="admin-button secondary" id="logout-button" type="button">Sair</button>
+      </div>
+
+      <div class="admin-notice">
+        Deixe a opção de demonstração marcada para produtos ou preços fictícios. Desmarque somente depois de confirmar os dados com a farmácia.
+      </div>
+
+      <section class="admin-card category-admin-card" aria-labelledby="category-title">
+        <div class="list-heading category-heading">
+          <div>
+            <h2 id="category-title">Categorias</h2>
+            <p>As categorias cadastradas aparecem na vitrine e no formulário de produtos.</p>
+          </div>
+          <button class="admin-button secondary small" id="refresh-categories" type="button">Atualizar</button>
+        </div>
+        <div class="category-admin-layout">
+          <form id="category-form" class="category-form">
+            <input id="category-slug" type="hidden">
+            <label for="category-name">Nome da categoria</label>
+            <input id="category-name" maxlength="100" placeholder="Ex.: Beleza" required>
+            <div class="admin-form-actions">
+              <button class="admin-button primary" id="save-category" type="submit">Cadastrar categoria</button>
+              <button class="admin-button secondary" id="cancel-category-edit" type="button" hidden>Cancelar</button>
+            </div>
+            <p class="admin-message" id="category-message" role="status" aria-live="polite"></p>
+          </form>
+          <div class="table-scroll">
+            <table class="admin-table">
+              <thead><tr><th>Categoria</th><th>Identificador</th><th>Produtos</th><th>Ações</th></tr></thead>
+              <tbody id="category-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <div class="admin-layout">
+        <section class="admin-card product-form-card" aria-labelledby="form-title">
+          <h2 id="form-title">Novo produto</h2>
+          <form id="product-form">
+            <input id="product-slug" type="hidden">
+            <label for="product-name">Nome</label>
+            <input id="product-name" name="name" maxlength="160" required>
+
+            <label for="product-category">Categoria</label>
+            <select id="product-category" name="category_slug" required></select>
+
+            <label for="product-description">Descrição</label>
+            <textarea id="product-description" name="description" rows="3" maxlength="500"></textarea>
+
+            <div class="admin-form-row">
+              <div>
+                <label for="product-price">Preço (R$)</label>
+                <input id="product-price" name="price" type="number" min="0" step="0.01" required>
+              </div>
+              <div>
+                <label for="product-package">Apresentação</label>
+                <input id="product-package" name="package_label" maxlength="80" placeholder="Ex.: 200 ml">
+              </div>
+            </div>
+
+            <label for="product-theme">Estilo do cartão</label>
+            <select id="product-theme" name="visual_theme">
+              <option value="lotion">Verde</option>
+              <option value="sun">Amarelo</option>
+              <option value="soap">Azul</option>
+              <option value="vitamin">Laranja</option>
+            </select>
+
+            <label class="active-field"><input id="product-demo" type="checkbox" checked> Produto ou preço de demonstração</label>
+            <label class="active-field"><input id="product-active" type="checkbox" checked> Produto ativo na loja</label>
+            <div class="admin-form-actions">
+              <button class="admin-button primary" id="save-product" type="submit">Salvar produto</button>
+              <button class="admin-button secondary" id="cancel-edit" type="button" hidden>Cancelar edição</button>
+            </div>
+            <p class="admin-message" id="product-message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="admin-card product-list-card" aria-labelledby="list-title">
+          <div class="list-heading">
+            <h2 id="list-title">Produtos cadastrados</h2>
+            <div class="row-actions">
+              <button class="admin-button primary small" id="new-product" type="button">Novo produto</button>
+              <button class="admin-button secondary small" id="refresh-products" type="button">Atualizar</button>
+            </div>
+          </div>
+          <p class="admin-message" id="list-message" role="status" aria-live="polite"></p>
+          <div class="table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="product-rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
