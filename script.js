@@ -22,12 +22,21 @@ function createCatalogCard(product) {
 
   const visual = document.createElement('div');
   visual.className = `catalog-visual visual-${product.visual_theme}`;
-  visual.setAttribute('aria-hidden', 'true');
-  const productName = document.createElement('span');
-  productName.textContent = product.name;
   const packageLabel = document.createElement('b');
   packageLabel.textContent = product.package_label;
-  visual.append(productName, packageLabel);
+  if (product.image_url) {
+    visual.classList.add('has-product-image');
+    const image = document.createElement('img');
+    image.className = 'catalog-product-image';
+    image.src = product.image_url;
+    image.alt = product.name;
+    visual.append(image, packageLabel);
+  } else {
+    visual.setAttribute('aria-hidden', 'true');
+    const productName = document.createElement('span');
+    productName.textContent = product.name;
+    visual.append(productName, packageLabel);
+  }
 
   const info = document.createElement('div');
   info.className = 'catalog-info';

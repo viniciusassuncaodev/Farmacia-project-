@@ -409,7 +409,7 @@ section {
     box-shadow: 0 14px 28px #06234a1b
 }
 .catalog-visual {
-    height: 158px;
+    height: 220px;
     position: relative;
     display: grid;
     place-items: center;
@@ -443,6 +443,20 @@ section {
     color: var(--ink);
     font-size: 10px;
     letter-spacing: 0
+}
+.catalog-visual.has-product-image {
+    background: #f7f9fc
+}
+.catalog-visual.has-product-image::before {
+    display: none
+}
+.catalog-product-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 14px 24px 18px;
+    object-fit: contain;
+    object-position: center
 }
 .visual-lotion {
     background: linear-gradient(135deg, #1b8a83, #b5d9bf)
@@ -1037,7 +1051,7 @@ footer {
         gap: 9px
     }
     .catalog-visual {
-        height: 120px;
+        height: 165px;
         font-size: 14px
     }
     .catalog-info {

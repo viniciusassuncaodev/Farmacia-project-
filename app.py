@@ -4,6 +4,7 @@ import os
 import re
 import secrets
 import unicodedata
+import uuid
 from contextlib import asynccontextmanager
 from decimal import Decimal
 from pathlib import Path
@@ -11,7 +12,7 @@ from typing import Literal
 
 import psycopg
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
+from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -21,6 +22,7 @@ from psycopg.rows import dict_row
 
 
 ROOT = Path(__file__).resolve().parent
+PRODUCT_IMAGES_DIR = ROOT / "assets" / "products"
 load_dotenv(ROOT / ".env")
 DATABASE_URL = os.environ.get("DATABASE_URL")
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "")
@@ -29,6 +31,7 @@ SESSION_SECRET = os.environ.get("SESSION_SECRET", "")
 SESSION_COOKIE = "farmacia_admin_session"
 SESSION_TTL_SECONDS = 60 * 60 * 8
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "false").lower() == "true"
+MAX_PRODUCT_IMAGE_SIZE = 5 * 1024 * 1024
 
 
 class LoginPayload(BaseModel):
@@ -151,6 +154,26 @@ def ensure_category_exists(category_slug: str) -> None:
         raise HTTPException(status_code=422, detail="Selecione uma categoria válida.")
 
 
+def image_extension(contents: bytes) -> str | None:
+    if contents.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if contents.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if len(contents) >= 12 and contents[:4] == b"RIFF" and contents[8:12] == b"WEBP":
+        return ".webp"
+    return None
+
+
+def remove_product_image(image_url: str) -> None:
+    prefix = "/assets/products/"
+    if not image_url.startswith(prefix):
+        return
+    filename = Path(image_url).name
+    image_path = (PRODUCT_IMAGES_DIR / filename).resolve()
+    if image_path.parent == PRODUCT_IMAGES_DIR.resolve() and image_path.is_file():
+        image_path.unlink()
+
+
 def initialize_database() -> None:
     with connect_db() as connection:
         with connection.cursor() as cursor:
@@ -173,11 +196,15 @@ def initialize_database() -> None:
                     price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
                     package_label TEXT NOT NULL DEFAULT '',
                     visual_theme TEXT NOT NULL DEFAULT 'lotion',
+                    image_url TEXT NOT NULL DEFAULT '',
                     is_demo BOOLEAN NOT NULL DEFAULT FALSE,
                     active BOOLEAN NOT NULL DEFAULT TRUE,
                     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 )
                 """
+            )
+            cursor.execute(
+                "ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT ''"
             )
             cursor.executemany(
                 "INSERT INTO categories (slug, name) VALUES (%s, %s) ON CONFLICT (slug) DO NOTHING",
@@ -200,6 +227,7 @@ def initialize_database() -> None:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    PRODUCT_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     initialize_database()
     yield
 
@@ -287,7 +315,7 @@ def list_products(
         rows = connection.execute(
             """
             SELECT p.slug, p.name, p.description, p.price::FLOAT AS price,
-                   p.package_label, p.visual_theme, p.is_demo,
+                   p.package_label, p.visual_theme, p.image_url, p.is_demo,
                    c.slug AS category_slug, c.name AS category
             FROM products AS p
             JOIN categories AS c ON c.slug = p.category_slug
@@ -371,7 +399,7 @@ def admin_list_products(_username: str = Depends(require_admin)):
         items = connection.execute(
             """
             SELECT p.slug, p.name, p.description, p.price::FLOAT AS price,
-                   p.package_label, p.visual_theme, p.is_demo, p.active,
+                   p.package_label, p.visual_theme, p.image_url, p.is_demo, p.active,
                    c.slug AS category_slug, c.name AS category
             FROM products AS p
             JOIN categories AS c ON c.slug = p.category_slug
@@ -395,7 +423,7 @@ def admin_create_product(
                  package_label, visual_theme, is_demo, active)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING slug, name, description, price::FLOAT AS price,
-                      package_label, visual_theme, is_demo, active,
+                      package_label, visual_theme, image_url, is_demo, active,
                       category_slug
             """,
             (
@@ -426,7 +454,7 @@ def admin_update_product(
                 package_label = %s, visual_theme = %s, is_demo = %s, active = %s
             WHERE slug = %s
             RETURNING slug, name, description, price::FLOAT AS price,
-                      package_label, visual_theme, is_demo, active,
+                      package_label, visual_theme, image_url, is_demo, active,
                       category_slug
             """,
             (
@@ -444,6 +472,63 @@ def admin_update_product(
     if not item:
         raise HTTPException(status_code=404, detail="Produto não encontrado.")
     return item
+
+
+@app.post("/api/admin/products/{slug}/image")
+async def admin_upload_product_image(
+    slug: str,
+    file: UploadFile = File(...),
+    _username: str = Depends(require_admin),
+):
+    contents = await file.read(MAX_PRODUCT_IMAGE_SIZE + 1)
+    if len(contents) > MAX_PRODUCT_IMAGE_SIZE:
+        raise HTTPException(status_code=413, detail="A imagem deve ter até 5 MB.")
+    extension = image_extension(contents)
+    if not extension:
+        raise HTTPException(
+            status_code=415, detail="Use uma imagem PNG, JPG ou WebP válida."
+        )
+
+    with connect_db() as connection:
+        product = connection.execute(
+            "SELECT image_url FROM products WHERE slug = %s", (slug,)
+        ).fetchone()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado.")
+
+    filename = f"{uuid.uuid4().hex}{extension}"
+    image_path = PRODUCT_IMAGES_DIR / filename
+    image_url = f"/assets/products/{filename}"
+    image_path.write_bytes(contents)
+    try:
+        with connect_db() as connection:
+            updated = connection.execute(
+                "UPDATE products SET image_url = %s WHERE slug = %s RETURNING image_url",
+                (image_url, slug),
+            ).fetchone()
+    except Exception:
+        image_path.unlink(missing_ok=True)
+        raise
+
+    if not updated:
+        image_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=404, detail="Produto não encontrado.")
+    remove_product_image(product["image_url"])
+    return {"image_url": updated["image_url"]}
+
+
+@app.delete("/api/admin/products/{slug}/image")
+def admin_remove_product_image(slug: str, _username: str = Depends(require_admin)):
+    with connect_db() as connection:
+        product = connection.execute(
+            "SELECT image_url FROM products WHERE slug = %s", (slug,)
+        ).fetchone()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado.")
+    with connect_db() as connection:
+        connection.execute("UPDATE products SET image_url = '' WHERE slug = %s", (slug,))
+    remove_product_image(product["image_url"])
+    return {"ok": True}
 
 
 @app.delete("/api/admin/products/{slug}")

@@ -10,9 +10,28 @@ Aplicação web de portfólio para apresentar uma rede de farmácias e gerenciar
 - Busca por produtos e categorias, sem diferenciar acentos.
 - Painel administrativo com login para cadastrar, editar e desativar produtos.
 - Cadastro e edição de categorias pelo painel; novas categorias aparecem na vitrine.
+- Upload de fotos de produtos em PNG, JPG ou WebP pelo painel, com limite de 5 MB.
 - API REST para consultar o catálogo e gerenciar produtos e categorias.
 - PostgreSQL com relacionamento entre produtos e categorias.
 - Desativação lógica de produtos, preservando o registro no banco.
+
+## Capturas da aplicação
+
+### Loja e categorias
+
+![Loja e categorias](assets/screenshots/loja-inicio.png)
+
+### Catálogo de produtos
+
+![Catálogo com os produtos cadastrados](assets/screenshots/catalogo-produtos.png)
+
+### Painel administrativo
+
+![Painel administrativo com categorias e produtos](assets/screenshots/painel-administrativo.png)
+
+### Cadastro e lista de produtos
+
+![FormulÃ¡rio de produto e lista de produtos cadastrados](assets/screenshots/painel-produtos.png)
 
 ## Arquitetura
 
@@ -83,6 +102,8 @@ Na primeira execução, o servidor cria as tabelas `categories` e `products`. Se
 | `GET` | `/api/admin/products` | Login | Lista produtos para o painel. |
 | `POST` | `/api/admin/products` | Login | Cadastra um produto. |
 | `PUT` | `/api/admin/products/{slug}` | Login | Edita um produto. |
+| `POST` | `/api/admin/products/{slug}/image` | Login | Envia ou substitui a foto de um produto. |
+| `DELETE` | `/api/admin/products/{slug}/image` | Login | Remove a foto de um produto. |
 | `DELETE` | `/api/admin/products/{slug}` | Login | Desativa um produto sem apagá-lo. |
 | `POST` | `/api/admin/categories` | Login | Cadastra uma categoria. |
 | `PUT` | `/api/admin/categories/{slug}` | Login | Edita o nome de uma categoria. |
@@ -94,7 +115,7 @@ Na primeira execução, o servidor cria as tabelas `categories` e `products`. Se
 ├── admin.html             # Painel administrativo
 ├── admin.js               # Login e gerenciamento do catálogo
 ├── admin.css              # Estilos do painel
-├── assets/                # Imagens locais
+├── assets/                # Imagens locais e fotos enviadas pelo painel
 ├── index.html             # Vitrine
 ├── script.js              # Busca e integração com a API
 ├── style.css              # Estilos da vitrine

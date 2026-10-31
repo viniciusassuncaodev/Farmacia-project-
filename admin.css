@@ -110,6 +110,46 @@
 .product-form-card textarea {
   resize: vertical;
 }
+.product-form-card input[type="file"] {
+  min-height: auto;
+  padding: 8px;
+  background: #f8fafd;
+  font-size: 11px;
+}
+.image-help {
+  margin-top: 6px;
+  color: #52637a;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.image-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  border: 1px solid #e2eaf4;
+  border-radius: 9px;
+  padding: 8px;
+  background: #f8fafd;
+}
+.image-preview[hidden] {
+  display: none;
+}
+.image-preview img {
+  width: 76px;
+  height: 76px;
+  border-radius: 6px;
+  background: #fff;
+  object-fit: contain;
+}
+.image-preview span {
+  color: #52637a;
+  font-size: 10px;
+}
+.image-remove {
+  align-self: flex-start;
+  margin-top: 7px;
+}
 .login-card input:focus,
 .product-form-card input:focus,
 .product-form-card select:focus,

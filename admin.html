@@ -110,6 +110,15 @@
               <option value="vitamin">Laranja</option>
             </select>
 
+            <label for="product-image">Foto do produto</label>
+            <input id="product-image" type="file" accept="image/png,image/jpeg,image/webp">
+            <small class="image-help">PNG, JPG ou WebP, até 5 MB. A foto aparece na vitrine.</small>
+            <div class="image-preview" id="image-preview-wrap" hidden>
+              <img id="product-image-preview" alt="Prévia da foto do produto">
+              <span id="image-preview-caption"></span>
+            </div>
+            <button class="admin-button secondary small image-remove" id="remove-product-image" type="button" hidden>Remover foto</button>
+
             <label class="active-field"><input id="product-demo" type="checkbox" checked> Produto ou preço de demonstração</label>
             <label class="active-field"><input id="product-active" type="checkbox" checked> Produto ativo na loja</label>
             <div class="admin-form-actions">

@@ -14,14 +14,22 @@ const categorySelect = document.querySelector('#product-category');
 const cancelEditButton = document.querySelector('#cancel-edit');
 const saveProductButton = document.querySelector('#save-product');
 const saveCategoryButton = document.querySelector('#save-category');
+const productImageInput = document.querySelector('#product-image');
+const imagePreviewWrap = document.querySelector('#image-preview-wrap');
+const productImagePreview = document.querySelector('#product-image-preview');
+const imagePreviewCaption = document.querySelector('#image-preview-caption');
+const removeProductImageButton = document.querySelector('#remove-product-image');
 let currentCategories = [];
+let currentProductImageUrl = '';
+let previewObjectUrl = '';
 
 async function apiRequest(url, options = {}) {
+  const isFormData = options.body instanceof FormData;
   const response = await fetch(url, {
     credentials: 'same-origin',
     ...options,
     headers: {
-      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(options.body && !isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...options.headers,
     },
   });
@@ -49,6 +57,25 @@ function showDashboard() {
 function setMessage(element, message, isError = false) {
   element.textContent = message;
   element.classList.toggle('message-error', isError);
+}
+
+function showImagePreview(imageUrl, caption = '', isLocalPreview = false) {
+  if (previewObjectUrl && previewObjectUrl !== imageUrl) {
+    URL.revokeObjectURL(previewObjectUrl);
+  }
+  previewObjectUrl = isLocalPreview ? imageUrl : '';
+  if (!imageUrl) {
+    imagePreviewWrap.hidden = true;
+    productImagePreview.removeAttribute('src');
+    imagePreviewCaption.textContent = '';
+    removeProductImageButton.hidden = true;
+    return;
+  }
+  imagePreviewWrap.hidden = false;
+  productImagePreview.src = imageUrl;
+  imagePreviewCaption.textContent = caption;
+  removeProductImageButton.textContent = isLocalPreview ? 'Cancelar foto selecionada' : 'Remover foto';
+  removeProductImageButton.hidden = false;
 }
 
 async function loadCategories() {
@@ -181,6 +208,8 @@ async function loadProducts() {
 function resetProductForm() {
   productForm.reset();
   document.querySelector('#product-slug').value = '';
+  currentProductImageUrl = '';
+  showImagePreview('');
   document.querySelector('#product-active').checked = true;
   document.querySelector('#product-demo').checked = true;
   document.querySelector('#form-title').textContent = 'Novo produto';
@@ -216,6 +245,8 @@ function startEdit(product) {
   document.querySelector('#product-price').value = Number(product.price).toFixed(2);
   document.querySelector('#product-package').value = product.package_label;
   document.querySelector('#product-theme').value = product.visual_theme;
+  currentProductImageUrl = product.image_url || '';
+  showImagePreview(currentProductImageUrl, currentProductImageUrl ? 'Foto atual do produto' : '');
   document.querySelector('#product-demo').checked = product.is_demo;
   document.querySelector('#product-active').checked = product.active;
   document.querySelector('#form-title').textContent = 'Editar produto';
@@ -259,6 +290,7 @@ productForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   saveProductButton.disabled = true;
   const slug = document.querySelector('#product-slug').value;
+  const imageFile = productImageInput.files[0];
   const payload = {
     name: document.querySelector('#product-name').value.trim(),
     category_slug: categorySelect.value,
@@ -271,10 +303,25 @@ productForm.addEventListener('submit', async (event) => {
   };
 
   try {
-    await apiRequest(slug ? `/api/admin/products/${encodeURIComponent(slug)}` : '/api/admin/products', {
+    const savedProduct = await apiRequest(slug ? `/api/admin/products/${encodeURIComponent(slug)}` : '/api/admin/products', {
       method: slug ? 'PUT' : 'POST',
       body: JSON.stringify(payload),
     });
+    if (imageFile) {
+      const imageData = new FormData();
+      imageData.append('file', imageFile);
+      try {
+        await apiRequest(`/api/admin/products/${encodeURIComponent(savedProduct.slug)}/image`, {
+          method: 'POST',
+          body: imageData,
+        });
+      } catch (imageError) {
+        resetProductForm();
+        await loadProducts();
+        setMessage(productMessage, `Produto salvo, mas a foto não foi enviada: ${imageError.message}`, true);
+        return;
+      }
+    }
     resetProductForm();
     setMessage(productMessage, slug ? 'Produto atualizado.' : 'Produto cadastrado.');
     await loadProducts();
@@ -282,6 +329,39 @@ productForm.addEventListener('submit', async (event) => {
     setMessage(productMessage, error.message, true);
   } finally {
     saveProductButton.disabled = false;
+  }
+});
+
+productImageInput.addEventListener('change', () => {
+  const selectedFile = productImageInput.files[0];
+  if (selectedFile) {
+    const localUrl = URL.createObjectURL(selectedFile);
+    showImagePreview(localUrl, 'Nova foto selecionada', true);
+  } else {
+    showImagePreview(currentProductImageUrl, currentProductImageUrl ? 'Foto atual do produto' : '');
+  }
+});
+
+removeProductImageButton.addEventListener('click', async () => {
+  if (productImageInput.files[0]) {
+    productImageInput.value = '';
+    showImagePreview(currentProductImageUrl, currentProductImageUrl ? 'Foto atual do produto' : '');
+    return;
+  }
+
+  const slug = document.querySelector('#product-slug').value;
+  if (!slug || !currentProductImageUrl) return;
+  removeProductImageButton.disabled = true;
+  try {
+    await apiRequest(`/api/admin/products/${encodeURIComponent(slug)}/image`, { method: 'DELETE' });
+    currentProductImageUrl = '';
+    showImagePreview('');
+    setMessage(productMessage, 'Foto removida do produto.');
+    await loadProducts();
+  } catch (error) {
+    setMessage(productMessage, error.message, true);
+  } finally {
+    removeProductImageButton.disabled = false;
   }
 });
 
